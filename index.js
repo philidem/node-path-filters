@@ -17,7 +17,7 @@ function RegExpFilter(regex, matchResult) {
 }
 
 RegExpFilter.prototype.test = function(path) {
-    return path.test(filter) ? this._matchResult || true : false;
+    return this._regex.test(path) ? this._matchResult || true : false;
 }
 
 RegExpFilter.prototype.toString = function() {
@@ -118,43 +118,54 @@ PathFilters.prototype.add = function(filter, recursive, matchResult) {
 
     if (Array.isArray(filter)) {
         var filters = filter;
+        var result = new Array(filters.length);
         for (var i = 0, len = filters.length; i < len; i++) {
-            this.add(filters[i], recursive, matchResult);
+            result[i] = filter = this.createFilter(filters[i], recursive, matchResult);
+            this._filters.push(filter);
         }
-        return this;
+        return result;
+    } else {
+        return this.createFilter(filter, recursive, matchResult);
     }
+}
 
+PathFilters.prototype.createFilter = function(filter, recursive, matchResult) {
     var filterImpl;
 
     if (typeof filter === 'string') {
         if (isSimpleRegExp(filter)) {
-            filterImpl = new RegExpFilter(createSimpleRegExp(filter), matchResult);
+            return new RegExpFilter(createSimpleRegExp(filter), matchResult);
         } else {
-            try {
-                var stat = fs.statSync(filter);
-                if (stat.isFile()) {
-                    recursive = false;
-                }
-            } catch(e) {
-                // ignore
-            }
-
-            filterImpl = new StringFilter(filter, recursive, matchResult);
+            return this.createSimpleFilter(filter, recursive, matchResult);
         }
     } else if (filter.constructor === RegExp) {
-        filterImpl = new RegExpFilter(filter, matchResult);
+        return new RegExpFilter(filter, matchResult);
     } else if (typeof filter === 'function') {
-        filterImpl = new FunctionFilter(filter, matchResult);
+        return new FunctionFilter(filter, matchResult);
     } else {
         throw new Error("Invalid filter: " + filter + " (" + (typeof filter) + ")");
     }
+}
 
-    this._filters.push(filterImpl);
+PathFilters.prototype.createSimpleFilter = function(filter, recursive, matchResult) {
+    try {
+        var stat = fs.statSync(filter);
+        if (stat.isFile()) {
+            recursive = false;
+        }
+    } catch(e) {
+        // ignore
+    }
 
-    return this;
+    return new StringFilter(filter, recursive, matchResult);
+}
+
+PathFilters.prototype.isEmpty = function() {
+    return (this._filters.length === 0);
 }
 
 module.exports = {
+    PathFilters: PathFilters,
     create: function() {
         return new PathFilters();
     }
