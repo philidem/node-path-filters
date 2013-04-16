@@ -125,7 +125,9 @@ PathFilters.prototype.add = function(filter, recursive, matchResult) {
         }
         return result;
     } else {
-        return this.createFilter(filter, recursive, matchResult);
+        var filter = this.createFilter(filter, recursive, matchResult);
+        this._filters.push(filter);
+        return filter;
     }
 }
 
@@ -134,6 +136,7 @@ PathFilters.prototype.createFilter = function(filter, recursive, matchResult) {
 
     if (typeof filter === 'string') {
         if (isSimpleRegExp(filter)) {
+            console.log('regex filter ' + filter);
             return new RegExpFilter(createSimpleRegExp(filter), matchResult);
         } else {
             return this.createSimpleFilter(filter, recursive, matchResult);
