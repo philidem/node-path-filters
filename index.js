@@ -102,9 +102,10 @@ PathFilters.prototype.getMatch = function(path) {
 PathFilters.prototype.getMatches = function(path) {
     var matches = [];
     for (var i = 0, len = this._filters.length; i < len; i++) {
-        var result = this._filters[i].test(path);
+        var filter = this._filters[i];
+        var result = filter.test(path);
         if (result !== false) {
-            matches.push(result);
+            matches.push(filter);
         }
     }
     return matches;
@@ -136,7 +137,6 @@ PathFilters.prototype.createFilter = function(filter, recursive, matchResult) {
 
     if (typeof filter === 'string') {
         if (isSimpleRegExp(filter)) {
-            console.log('regex filter ' + filter);
             return new RegExpFilter(createSimpleRegExp(filter), matchResult);
         } else {
             return this.createSimpleFilter(filter, recursive, matchResult);

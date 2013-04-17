@@ -1,7 +1,7 @@
 {
   "name": "path-filters",
   "description": "Manages a collection of path-based filters",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "homepage": "https://github.com/philidem/node-path-filters",
   "authors": [
     {
