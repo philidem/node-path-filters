@@ -89,6 +89,10 @@ PathFilters.prototype.getFilters = function() {
     return this._filters;
 }
 
+PathFilters.prototype.isEmpty = function() {
+    return this._filters.length === 0;
+}
+
 PathFilters.prototype.getMatch = function(path) {
     for (var i = 0, len = this._filters.length; i < len; i++) {
         var result = this._filters[i].test(path);
@@ -136,6 +140,8 @@ PathFilters.prototype.createFilter = function(filter, recursive, matchResult) {
     var filterImpl;
 
     if (typeof filter === 'string') {
+
+        
         if (isSimpleRegExp(filter)) {
             return new RegExpFilter(createSimpleRegExp(filter), matchResult);
         } else {
@@ -165,6 +171,10 @@ PathFilters.prototype.createSimpleFilter = function(filter, recursive, matchResu
 
 PathFilters.prototype.isEmpty = function() {
     return (this._filters.length === 0);
+}
+
+PathFilters.prototype.toString = function() {
+    return require('util').inspect(this._filters);
 }
 
 module.exports = {
