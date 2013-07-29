@@ -81,6 +81,14 @@ function createSimpleRegExpFilter(str, matchResult) {
     }
 }
 
+var allFilter = new FunctionFilter(function() {
+    return true;
+});
+
+allFilter.toString = function() {
+    return '*';
+}
+
 function PathFilters() {
     this._filters = [];
 }
@@ -140,9 +148,9 @@ PathFilters.prototype.createFilter = function(filter, recursive, matchResult) {
     var filterImpl;
 
     if (typeof filter === 'string') {
-
-        
-        if (isSimpleRegExp(filter)) {
+        if (filter === '*') {
+            return allFilter;
+        } else if (isSimpleRegExp(filter)) {
             return new RegExpFilter(createSimpleRegExp(filter), matchResult);
         } else {
             return this.createSimpleFilter(filter, recursive, matchResult);
