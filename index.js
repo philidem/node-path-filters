@@ -5,6 +5,10 @@ var simpleRegExpReplacements = {
     "?": ".?"
 };
 
+
+function normalizePath(path) {
+    return path = path.replace(/\\/g, '/');
+}
 var simpleRegExpTest = /[\?\*]/;
 
 function startsWith(s, prefix) {
@@ -102,6 +106,7 @@ PathFilters.prototype.isEmpty = function() {
 }
 
 PathFilters.prototype.getMatch = function(path) {
+    path = normalizePath(path);
     for (var i = 0, len = this._filters.length; i < len; i++) {
         var result = this._filters[i].test(path);
         if (result !== false) {
@@ -112,6 +117,7 @@ PathFilters.prototype.getMatch = function(path) {
 }
 
 PathFilters.prototype.getMatches = function(path) {
+    path = normalizePath(path);
     var matches = [];
     for (var i = 0, len = this._filters.length; i < len; i++) {
         var filter = this._filters[i];
@@ -124,6 +130,7 @@ PathFilters.prototype.getMatches = function(path) {
 }
 
 PathFilters.prototype.hasMatch = function(path) {
+    path = normalizePath(path);
     return this.getMatch(path) !== undefined ? true : false;
 }
 
