@@ -13,7 +13,7 @@
       "email": "pnidem@gmail.com"
     }
   ],
-  "main": "./index.js",
+  "main": "./path-filters.js",
   "devDependencies": {
       "mocha": "*"
   },
