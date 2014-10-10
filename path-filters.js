@@ -1,7 +1,8 @@
 var fs = require('fs');
 
 var simpleRegExpReplacements = {
-    '*': '.*?',
+    '*': '[^/]*?',
+    '**': '.*?',
     '?': '.?'
 };
 
@@ -70,7 +71,7 @@ function escapeRegExpStr(str) {
 }
 
 function createSimpleRegExp(str) {
-    return new RegExp('^' + str.replace(/[\*\?]|[^\*\?]*/g, function(match) {
+    return new RegExp('^' + str.replace(/\*+|\?|[^\*\?]*/g, function(match) {
         return simpleRegExpReplacements[match] || escapeRegExpStr(match);
     }) + '$');
 }
